@@ -3,7 +3,7 @@
         <th scope="row">{{ $index++ }}</th>
         <td>{{ str_repeat('— ', $level) }}{{ $category->name }}</td>
         <td>{{ $category->description }}</td>
-        <td><img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" style="width: 50px"
+        <td><img src="{{ $category->image_url }}" alt="{{ $category->name }}" style="width: 50px"
                 class="border"></td>
         <td>
             <a href="/admin/categories/{{ $category->id }}/edit" class="btn btn-outline-secondary btn-sm edit-btn"><i

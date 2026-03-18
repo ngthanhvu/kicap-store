@@ -16,7 +16,7 @@
 
         <!-- Ảnh đại diện -->
         <div class="text-center mb-2">
-            <img src="{{ asset($post->image) }}" class="img-fluid rounded mb-4" alt="Ảnh bài viết">
+            <img src="{{ $post->image_url }}" class="img-fluid rounded mb-4" alt="Ảnh bài viết">
 
         </div>
         <!-- Nội dung chính -->

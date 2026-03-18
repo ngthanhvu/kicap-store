@@ -109,7 +109,7 @@
                         </div>
                         <div id="main_image_preview" class="mt-2">
                             @if ($product->mainImage)
-                                <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                <img src="{{ $product->mainImage->image_url }}"
                                     alt="{{ $product->name }}" style="max-width: 200px; border-radius: 5px;">
                             @endif
                         </div>
@@ -149,7 +149,7 @@
                         <div id="sub_images_preview" class="mt-2 d-flex flex-wrap gap-2">
                             @foreach ($product->images()->where('is_main', false)->get() as $image)
                                 <div class="sub-image-wrapper position-relative">
-                                    <img src="{{ asset('storage/' . $image->sub_image) }}" alt="Sub image"
+                                    <img src="{{ $image->image_url }}" alt="Sub image"
                                         style="max-width: 100px; border-radius: 5px;">
                                     <button type="button"
                                         class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-sub-image"
@@ -411,7 +411,7 @@
                     preview.innerHTML = '';
                     @if ($product->mainImage)
                         preview.innerHTML =
-                            `<img src="{{ asset('storage/' . $product->mainImage->sub_image) }}" alt="{{ $product->name }}" style="max-width: 200px; border-radius: 5px;">`;
+                            `<img src="{{ $product->mainImage->image_url }}" alt="{{ $product->name }}" style="max-width: 200px; border-radius: 5px;">`;
                     @endif
                 } else if (input.id === 'sub_images') {
                     const preview = document.getElementById('sub_images_preview');

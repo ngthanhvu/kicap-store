@@ -225,7 +225,7 @@ class HomeController extends Controller
                         'product' => [
                             'name' => $product->product->name,
                             'mainImage' => [
-                                'sub_image' => $product->product->mainImage->sub_image
+                                'image_url' => $product->product->mainImage?->image_url
                             ]
                         ],
                         'total_quantity' => $product->total_quantity,

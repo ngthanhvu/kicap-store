@@ -80,7 +80,7 @@
                             {{ \Illuminate\Support\Str::limit(strip_tags($post->content), 100) }}
                         </td>
                         <td>
-                            <img src="{{ asset($post->image) }}" alt="{{ $post->title }}" class="img-thumbnail"
+                            <img src="{{ $post->image_url }}" alt="{{ $post->title }}" class="img-thumbnail"
                                 style="width: 100px; height: 100px; object-fit: cover;">
                         </td>
                         <td>{{ $post->slug }}</td>

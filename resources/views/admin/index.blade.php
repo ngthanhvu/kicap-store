@@ -145,7 +145,7 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>
-                            <img src="{{ asset('storage/' . $product->product->mainImage->sub_image) }}"
+                            <img src="{{ $product->product->mainImage?->image_url }}"
                                 alt="{{ $product->product->name }}" class="tw-w-16 tw-h-16 tw-object-cover">
                         </td>
                         <td>{{ $product->product->name }}</td>
@@ -331,7 +331,7 @@
                         const row = `
                         <tr>
                             <td>${index + 1}</td>
-                            <td><img src="storage/${product.product.mainImage.sub_image}" alt="${product.product.name}" class="tw-w-16 tw-h-16 tw-object-cover"></td>
+                            <td><img src="${product.product.mainImage.image_url ?? ''}" alt="${product.product.name}" class="tw-w-16 tw-h-16 tw-object-cover"></td>
                             <td>${product.product.name}</td>
                             <td>${product.total_quantity}</td>
                             <td>${new Intl.NumberFormat('vi-VN').format(product.total_revenue)} VNĐ</td>

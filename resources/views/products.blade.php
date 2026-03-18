@@ -166,7 +166,7 @@
                             <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
                                 <div class="card product-card border-0">
                                     @if ($product->mainImage)
-                                        <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                        <img src="{{ $product->mainImage->image_url }}"
                                             class="card-img-top" alt="{{ $product->name }}"
                                             style="width: 100%; height: 225px; object-fit: cover; border: 1px solid #ccc">
                                     @else

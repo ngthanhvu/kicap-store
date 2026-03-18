@@ -208,7 +208,7 @@
                             <li class="list-group-item tw-d-flex tw-justify-between tw-align-items-center">
                                 <div class="tw-d-flex tw-align-items-center tw-gap-3">
                                     @if ($cart->product->mainImage)
-                                        <img src="{{ asset('storage/' . $cart->product->mainImage->sub_image) }}"
+                                        <img src="{{ $cart->product->mainImage->image_url }}"
                                             alt="{{ $cart->product->name }}" class="product-image" width="50"
                                             height="50" style="border: 1px solid #ccc">
                                     @else

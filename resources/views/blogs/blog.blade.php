@@ -16,7 +16,7 @@
                 <div class="col-md-4">
                     <a href="{{ route('blog.show', $post->slug) }}" class="text-decoration-none text-dark">
                         <div class="card border-0">
-                            <img src="{{ $post->image }}" class="card-img-top blog-img" alt="Blog Image" width="400"
+                            <img src="{{ $post->image_url }}" class="card-img-top blog-img" alt="Blog Image" width="400"
                                 height="300" style="object-fit: cover;">
                             <div class="mt-2">
                                 <h5>{{ $post->title }}</h5>

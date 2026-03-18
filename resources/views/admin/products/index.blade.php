@@ -110,7 +110,7 @@
                         <td>{{ number_format($product->discount_price) }} đ</td>
                         <td>
                             @if ($product->mainImage)
-                                <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                <img src="{{ $product->mainImage->image_url }}"
                                     alt="{{ $product->name }}" style="width: 100px;">
                             @else
                                 Không có ảnh

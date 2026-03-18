@@ -115,7 +115,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>
                                 @if ($cart->product->mainImage)
-                                    <img src="{{ asset('storage/' . $cart->product->mainImage->sub_image) }}"
+                                    <img src="{{ $cart->product->mainImage->image_url }}"
                                         alt="{{ $cart->product->name }}">
                                 @else
                                     <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"

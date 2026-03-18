@@ -205,7 +205,7 @@
                                                             <div class="card"
                                                                 style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                                                                 @if ($product->mainImage)
-                                                                    <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                                                    <img src="{{ $product->mainImage->image_url }}"
                                                                         class="card-img-top" alt="{{ $product->name }}">
                                                                 @else
                                                                     <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
@@ -252,7 +252,7 @@
                                                 <div class="card"
                                                     style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                                                     @if ($product->mainImage)
-                                                        <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                                        <img src="{{ $product->mainImage->image_url }}"
                                                             class="card-img-top" alt="{{ $product->name }}">
                                                     @else
                                                         <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
@@ -288,7 +288,7 @@
                                     <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
                                         <div class="card" style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                                             @if ($product->mainImage)
-                                                <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                                <img src="{{ $product->mainImage->image_url }}"
                                                     class="card-img-top" alt="{{ $product->name }}">
                                             @else
                                                 <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
@@ -334,7 +334,7 @@
                         <div class="col-6 col-md-3 mb-3">
                             <a href="/san-pham?category_id={{ $list->id }}" class="text-decoration-none text-dark">
                                 <div class="category-card">
-                                    <img src="{{ asset('storage/' . $list->image) }}" alt="{{ $list->name }}">
+                                    <img src="{{ $list->image_url }}" alt="{{ $list->name }}">
                                     <p class="text-center tw-text-[25px] text-uppercase">{{ $list->name }}</p>
                                 </div>
                             </a>
@@ -367,7 +367,7 @@
                                                         class="text-decoration-none text-dark">
                                                         <div class="card">
                                                             @if ($product->mainImage)
-                                                                <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                                                <img src="{{ $product->mainImage->image_url }}"
                                                                     class="card-img-top" alt="{{ $product->name }}">
                                                             @else
                                                                 <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
@@ -412,7 +412,7 @@
                                         <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
                                             <div class="card">
                                                 @if ($product->mainImage)
-                                                    <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                                    <img src="{{ $product->mainImage->image_url }}"
                                                         class="card-img-top" alt="{{ $product->name }}">
                                                 @else
                                                     <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
@@ -448,7 +448,7 @@
                                 <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
                                     <div class="card">
                                         @if ($product->mainImage)
-                                            <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                            <img src="{{ $product->mainImage->image_url }}"
                                                 class="card-img-top" alt="{{ $product->name }}">
                                         @else
                                             <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
@@ -496,7 +496,7 @@
                         <div class="col-12 col-md-4 mb-4">
                             <a href="{{ route('blog.show', $post->slug) }}" class="text-decoration-none text-dark">
                                 <div class="tw-card border-0">
-                                    <img src="{{ $post->image }}" class="card-img-top blog-img" alt="Blog Image"
+                                    <img src="{{ $post->image_url }}" class="card-img-top blog-img" alt="Blog Image"
                                         width="400" height="300" style="object-fit: cover;">
                                     <div class="mt-2">
                                         <h5>{{ $post->title }}</h5>

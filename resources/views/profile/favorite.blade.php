@@ -37,7 +37,7 @@
                             <a href="/chi-tiet/{{ $favorite->product->slug }}" class="text-decoration-none text-dark">
                                 <div class="card product-card border-0">
                                     @if ($favorite->product->mainImage)
-                                        <img src="{{ asset('storage/' . $favorite->product->mainImage->sub_image) }}"
+                                        <img src="{{ $favorite->product->mainImage->image_url }}"
                                             class="card-img-top" alt="{{ $favorite->product->name }}"
                                             style="width: 225px; height: 225px; object-fit: cover; border: 1px solid #ccc">
                                     @else

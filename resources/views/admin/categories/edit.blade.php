@@ -48,7 +48,7 @@
             <div class="mb-3">
                 <label for="image" class="form-label">Hình ảnh</label>
                 <input type="file" class="form-control" accept="image/*" id="image" name="image">
-                <small>Hình ảnh hiện tại: <img src="{{ Storage::url($category->image) }}" alt="{{ $category->name }}"
+                <small>Hình ảnh hiện tại: <img src="{{ $category->image_url }}" alt="{{ $category->name }}"
                         width="50"></small>
                 @error('image')
                     <p class="text-danger">{{ $message }}</p>

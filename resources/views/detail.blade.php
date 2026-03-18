@@ -143,7 +143,7 @@
         <div class="row">
             <div class="col-md-6">
                 @if ($product->mainImage)
-                    <img id="mainImage" src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                    <img id="mainImage" src="{{ $product->mainImage->image_url }}"
                         class="product-image img-fluid" alt="{{ $product->name }}">
                 @else
                     <img id="mainImage"
@@ -152,7 +152,7 @@
                 @endif
                 <div class="mt-3 d-flex">
                     @forelse ($product->images as $image)
-                        <img src="{{ asset('storage/' . $image->sub_image) }}"
+                        <img src="{{ $image->image_url }}"
                             class="thumbnail mx-1 {{ $image->is_main ? 'active' : '' }}" onclick="changeImage(this)"
                             alt="{{ $product->name }}">
                     @empty
@@ -381,7 +381,7 @@
                             <div class="card card-product h-100">
                                 {{-- <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}" alt="{{ $product->name }}" class="card-img-top"> --}}
                                 @if ($product->mainImage)
-                                    <img src="{{ asset('storage/' . $product->mainImage->sub_image) }}"
+                                    <img src="{{ $product->mainImage->image_url }}"
                                         alt="{{ $product->name }}" class="card-img-top">
                                 @else
                                     <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"

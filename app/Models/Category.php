@@ -5,12 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Category extends Model
 {
     use HasFactory;
 
     protected $fillable = ['name', 'slug', 'description', 'image', 'parent_id'];
+
+    protected $appends = ['image_url'];
 
     public function parent()
     {
@@ -43,5 +47,18 @@ class Category extends Model
         }
 
         return $childIds;
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        if (filter_var($this->image, FILTER_VALIDATE_URL) || Str::startsWith($this->image, ['//'])) {
+            return $this->image;
+        }
+
+        return Storage::url($this->image);
     }
 }
