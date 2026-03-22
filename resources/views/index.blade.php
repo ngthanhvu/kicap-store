@@ -105,6 +105,66 @@
             object-fit: cover;
         }
 
+        .hero-slider-wrap {
+            width: 100%;
+            max-width: 1320px;
+            margin: 16px auto 0;
+            padding: 0 0.75rem;
+        }
+
+        .hero-slider {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.14);
+            background: #0f172a;
+        }
+
+        .hero-slider .carousel-item {
+            position: relative;
+        }
+
+        .hero-slide-image {
+            width: 100%;
+            height: clamp(260px, 38vw, 430px);
+            object-fit: cover;
+            display: block;
+            filter: brightness(0.72);
+        }
+
+        .hero-caption {
+            position: absolute;
+            inset: auto auto 0 0;
+            width: min(520px, 100%);
+            padding: 28px 28px 34px;
+            color: #fff;
+            background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.82) 55%, rgba(15, 23, 42, 0.95) 100%);
+        }
+
+        .hero-caption h2 {
+            font-size: clamp(28px, 4vw, 48px);
+            line-height: 1.05;
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-caption p {
+            margin-bottom: 16px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.84);
+        }
+
+        .hero-caption .btn {
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-weight: 700;
+        }
+
+        .hero-slider .carousel-control-prev,
+        .hero-slider .carousel-control-next {
+            width: 8%;
+        }
+
         /* Mobile styles */
         @media (max-width: 768px) {
             .card-subtitle {
@@ -130,6 +190,29 @@
                 height: 200px;
             }
 
+            .hero-slider-wrap {
+                margin-top: 12px;
+                padding: 0 0.75rem;
+            }
+
+            .hero-slide-image {
+                height: 240px;
+            }
+
+            .hero-caption {
+                width: 100%;
+                padding: 18px 18px 22px;
+            }
+
+            .hero-caption h2 {
+                font-size: 24px;
+            }
+
+            .hero-caption p {
+                font-size: 13px;
+                margin-bottom: 12px;
+            }
+
             .swiper-button-prev,
             .swiper-button-next {
                 display: none !important;
@@ -152,29 +235,53 @@
         }
     </style>
 
-    <div id="carouselExample" class="carousel slide mx-auto" data-bs-ride="carousel" style="width: 80%">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/slider_1.jpg?1741705947617"
-                    class="d-block w-100" alt="...">
+    <div class="container hero-slider-wrap">
+        <div id="carouselExample" class="carousel slide hero-slider" data-bs-ride="carousel">
+            @if (count($sliders) > 1)
+                <div class="carousel-indicators">
+                    @foreach ($sliders as $index => $slide)
+                        <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="{{ $index }}"
+                            class="{{ $index === 0 ? 'active' : '' }}" aria-current="{{ $index === 0 ? 'true' : 'false' }}"
+                            aria-label="Slide {{ $index + 1 }}"></button>
+                    @endforeach
+                </div>
+            @endif
+
+            <div class="carousel-inner">
+                @foreach ($sliders as $index => $slide)
+                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                        <img src="{{ $slide['image'] }}" class="hero-slide-image"
+                            alt="{{ $slide['title'] ?: 'Slider ' . ($index + 1) }}">
+                        @if (!empty($slide['title']) || !empty($slide['subtitle']) || !empty($slide['button_text']))
+                            <div class="hero-caption">
+                                @if (!empty($slide['title']))
+                                    <h2>{{ $slide['title'] }}</h2>
+                                @endif
+                                @if (!empty($slide['subtitle']))
+                                    <p>{{ $slide['subtitle'] }}</p>
+                                @endif
+                                @if (!empty($slide['button_text']))
+                                    <a href="{{ $slide['button_link'] ?: '#' }}" class="btn btn-light">
+                                        {{ $slide['button_text'] }}
+                                    </a>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
             </div>
-            <div class="carousel-item">
-                <img src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/slider_3.jpg?1741705947617"
-                    class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-                <img src="https://bizweb.dktcdn.net/100/436/596/themes/980306/assets/slider_4.jpg?1741705947617"
-                    class="d-block w-100" alt="...">
-            </div>
+
+            @if (count($sliders) > 1)
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            @endif
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
     </div>
 
     <div class="container mt-4">

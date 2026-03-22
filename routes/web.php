@@ -14,6 +14,7 @@ use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\SettingController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -106,6 +107,9 @@ Route::middleware('check.role:admin')->group(function () {
     Route::delete('/admin/posts/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
     Route::get('/admin/posts/{post}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
     Route::put('/admin/posts/{post}', [PostController::class, 'update'])->name('admin.posts.update');
+    //settings
+    Route::get('/admin/settings/home-slider', [SettingController::class, 'editHomeSlider'])->name('admin.settings.home-slider.edit');
+    Route::put('/admin/settings/home-slider', [SettingController::class, 'updateHomeSlider'])->name('admin.settings.home-slider.update');
 });
 
 //checkout

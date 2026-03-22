@@ -136,7 +136,7 @@
             <a href="/admin/comments"><i class="fa-solid fa-comments tw-mr-2"></i> Bình luận & đánh giá</a>
             <a href="/admin/posts"><i class="fas fa-book tw-mr-2"></i> Bài viết</a>
             <a href="/admin/users"><i class="fas fa-users tw-mr-2"></i> Người dùng</a>
-            <a href="#"><i class="fas fa-gear tw-mr-2"></i> Cài đặt</a>
+            <a href="{{ route('admin.settings.home-slider.edit') }}"><i class="fas fa-gear tw-mr-2"></i> Cài đặt</a>
         </nav>
     </div>
 

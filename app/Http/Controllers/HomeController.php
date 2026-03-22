@@ -16,12 +16,14 @@ use App\Models\Orders;
 use Carbon\Carbon;
 use App\Models\Post;
 use App\Models\Favorite;
+use App\Models\Setting;
 
 class HomeController extends Controller
 {
     public function index()
     {
         $title = "Trang chủ";
+        $sliders = Setting::getValue('home_slider', $this->defaultHomeSliders());
 
         $products = Product::with('category', 'mainImage', 'variants', 'images')
             ->orderBy('created_at', 'desc')
@@ -38,7 +40,7 @@ class HomeController extends Controller
 
         $posts = Post::latest()->take(3)->get();
 
-        return view('index', compact('products', 'categories', 'title', 'list_category', 'posts'));
+        return view('index', compact('products', 'categories', 'title', 'list_category', 'posts', 'sliders'));
     }
 
     public function admin(Request $request)
@@ -370,5 +372,32 @@ class HomeController extends Controller
         // dd($favorites);
 
         return view('profile.favorite', compact('title', 'favorites'));
+    }
+
+    private function defaultHomeSliders(): array
+    {
+        return [
+            [
+                'image' => 'https://placehold.co/1400x520?text=Kicap+Slider+1',
+                'title' => 'KEYCAP CHO SETUP DEP',
+                'subtitle' => 'Cap nhat bo keycap, switch va gear ban phim co cho goc may cua ban.',
+                'button_text' => 'Xem san pham',
+                'button_link' => '/san-pham',
+            ],
+            [
+                'image' => 'https://placehold.co/1400x520?text=Kicap+Slider+2',
+                'title' => 'BUILD CUSTOM DE DANG',
+                'subtitle' => 'Tu starter kit den phu kien build custom, tat ca da san sang.',
+                'button_text' => 'Kham pha ngay',
+                'button_link' => '/san-pham',
+            ],
+            [
+                'image' => 'https://placehold.co/1400x520?text=Kicap+Slider+3',
+                'title' => 'TIN TUC VA REVIEW',
+                'subtitle' => 'Xem bai viet moi ve keycap, switch va xu huong mechanical keyboard.',
+                'button_text' => 'Doc tin tuc',
+                'button_link' => '/tin-tuc',
+            ],
+        ];
     }
 }
