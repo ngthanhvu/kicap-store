@@ -188,13 +188,129 @@ MAIL_FROM_NAME="${APP_NAME}"
 
 ## 🚀 Chạy ứng dụng
 
-### Development server
+### Cách 1: Chạy trực tiếp (Development)
 
 ```bash
 php artisan serve
 ```
 
 Truy cập: `http://localhost:8000`
+
+### Cách 2: Chạy bằng Docker (Khuyến nghị)
+
+Dự án đã được cấu hình sẵn Docker với 2 services: **app** (Laravel) và **db** (MySQL).
+
+#### Bước 1: Chuẩn bị môi trường
+
+```bash
+# Copy file cấu hình
+copy .env.example .env
+
+# Chỉnh sửa .env nếu cần (tuỳ chọn)
+# Các biến môi trường cho Docker:
+# - DB_DATABASE=php3_final
+# - DB_USERNAME=laravel
+# - DB_PASSWORD=secret
+# - DB_ROOT_PASSWORD=root
+```
+
+#### Bước 2: Build và chạy containers
+
+```bash
+# Build và start tất cả services
+docker-compose up -d --build
+
+# Xem logs để theo dõi
+docker-compose logs -f
+```
+
+#### Bước 3: Chạy migrations (nếu cần)
+
+```bash
+# Option 1: Set biến môi trường để tự động migrate
+# Thêm vào .env: RUN_MIGRATIONS=true
+# Sau đó restart container
+docker-compose restart app
+
+# Option 2: Chạy migration thủ công
+docker-compose exec app php artisan migrate
+```
+
+#### Bước 4: Truy cập ứng dụng
+
+- **Ứng dụng**: http://localhost:8000
+- **Database**: localhost:3309 (MySQL 8.0)
+
+#### Một số lệnh Docker hữu ích
+
+```bash
+# Xem danh sách containers đang chạy
+docker-compose ps
+
+# Xem logs
+docker-compose logs -f app
+docker-compose logs -f db
+
+# Chạy lệnh trong container
+docker-compose exec app php artisan list
+docker-compose exec app composer install
+docker-compose exec app npm install
+docker-compose exec app npm run build
+
+# Dừng containers
+docker-compose down
+
+# Dừng và xóa volumes (lưu ý: sẽ mất dữ liệu database)
+docker-compose down -v
+
+# Restart services
+docker-compose restart
+
+# Rebuild container
+docker-compose up -d --build --force-recreate
+```
+
+#### Tạo admin user trong Docker
+
+```bash
+docker-compose exec app php artisan tinker
+```
+
+```php
+\App\Models\User::create([
+    'name' => 'Admin',
+    'email' => 'admin@kicap.com',
+    'password' => bcrypt('password'),
+    'role' => 'admin'
+]);
+```
+
+---
+
+### Troubleshooting Docker
+
+**Lỗi permission storage:**
+```bash
+docker-compose exec app chown -R www-data:www-data /var/www/storage
+docker-compose exec app chmod -R ug+rwx /var/www/storage
+```
+
+**Lỗi database connection:**
+- Kiểm tra DB trong `.env` đã đúng với `docker-compose.yml`
+- Đảm bảo db container đã healthy: `docker-compose ps`
+- Xem logs db: `docker-compose logs db`
+
+**Lỗi composer install trong container:**
+```bash
+docker-compose exec app composer install --no-interaction
+```
+
+**Reset hoàn toàn và build lại:**
+```bash
+docker-compose down -v
+docker-compose up -d --build
+docker-compose exec app php artisan migrate:fresh --seed
+```
 
 ### Tài khoản admin mặc định
 
