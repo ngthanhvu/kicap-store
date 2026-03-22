@@ -32,7 +32,7 @@
                             </form>
                         </div cla>
 
-                        <table class="table text-center">
+                        <table class="table table-bordered text-center">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>

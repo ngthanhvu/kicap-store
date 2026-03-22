@@ -28,10 +28,7 @@
 
         <p><strong>Khách hàng:</strong> {{ $order->user->name }}</p>
         <p><strong>Địa chỉ:</strong>
-            {{ $order->address->street }},
-            {{ $order->address->ward }},
-            {{ $order->address->district }},
-            {{ $order->address->province }}
+            {{ implode(', ', array_filter([$order->address->street, $order->address->ward, $order->address->district, $order->address->province])) }}
         </p>
         <p><strong>Số điện thoại:</strong> {{ $order->address->phone }}</p>
         <p><strong>Ngày đặt:</strong> {{ $order->created_at->format('d/m/Y') }}</p>

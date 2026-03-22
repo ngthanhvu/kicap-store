@@ -2,67 +2,107 @@
 
 @section('content')
     <style>
-        .card {
-            transition: all 0.3s ease-in-out;
+        .shop-product-card {
+            position: relative;
+            transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
             overflow: hidden;
-            background: #fff;
-            border: none;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 22px;
+            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
             margin: 0 5px;
-            /* Add some margin between cards */
         }
 
-        .card:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            transform: translateY(-5px);
+        .shop-product-card:hover {
+            transform: translateY(-7px);
+            border-color: rgba(15, 23, 42, 0.15);
+            box-shadow: 0 22px 44px rgba(15, 23, 42, 0.14);
         }
 
-        .card-img-top {
+        .shop-product-media {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.78), transparent 36%),
+                linear-gradient(180deg, #eef2f7 0%, #e5ebf3 100%);
+        }
+
+        .shop-product-media img {
             width: 100%;
             height: 250px;
             object-fit: cover;
+            display: block;
+            transition: transform 0.35s ease;
         }
 
-        .card-body {
-            padding: 15px;
+        .shop-product-card:hover .shop-product-media img {
+            transform: scale(1.04);
         }
 
-        .ellipsis {
-            white-space: nowrap;
+        .shop-product-chip {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            color: #0f172a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .shop-product-body {
+            padding: 16px 16px 18px;
+        }
+
+        .shop-product-category {
+            display: inline-block;
+            margin-bottom: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            color: #64748b;
+        }
+
+        .shop-product-title {
+            min-height: 56px;
+            margin-bottom: 10px;
+            font-size: 1.02rem;
+            font-weight: 800;
+            line-height: 1.35;
+            color: #1e293b;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
         }
 
-        .card-title {
-            font-size: 13px;
-            color: #6c757d;
-        }
-
-        .card-subtitle {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin: 5px 0;
-        }
-
-        .card-text {
-            font-size: 16px;
-            color: #e74c3c;
-            font-weight: bold;
+        .shop-product-price {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
         .original-price {
-            font-size: 14px;
-            color: #999;
+            font-size: 0.88rem;
+            color: #94a3b8;
             text-decoration: line-through;
-            margin-right: 8px;
+            margin-right: 2px;
         }
 
         .discount-price {
-            font-size: 16px;
-            color: #e74c3c;
-            font-weight: bold;
+            font-size: 1.05rem;
+            color: #ea580c;
+            font-weight: 800;
         }
 
         /* CSS cho danh sách danh mục */
@@ -167,20 +207,6 @@
 
         /* Mobile styles */
         @media (max-width: 768px) {
-            .card-subtitle {
-                font-size: 14px;
-            }
-
-            .card-text,
-            .discount-price,
-            .original-price {
-                font-size: 13px;
-            }
-
-            .card-img-top {
-                height: 180px;
-            }
-
             .category-card p {
                 font-size: 16px;
                 padding: 5px;
@@ -231,6 +257,20 @@
 
             .mobile-product-swiper .card {
                 margin: 0;
+            }
+
+            .shop-product-media img {
+                height: 210px;
+            }
+
+            .shop-product-title {
+                min-height: 48px;
+                font-size: 0.96rem;
+            }
+
+            .discount-price,
+            .original-price {
+                font-size: 13px;
             }
         }
     </style>
@@ -309,21 +349,23 @@
                                                     <div class="col-md-3 col-6">
                                                         <a href="/chi-tiet/{{ $product->slug }}"
                                                             class="text-decoration-none text-dark">
-                                                            <div class="card"
-                                                                style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                                                                @if ($product->mainImage)
-                                                                    <img src="{{ $product->mainImage->image_url }}"
-                                                                        class="card-img-top" alt="{{ $product->name }}">
-                                                                @else
-                                                                    <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                                                        class="card-img-top" alt="Keycap Artisan Natra">
-                                                                @endif
-                                                                <div class="card-body text-center">
+                                                            <div class="shop-product-card">
+                                                                <div class="shop-product-media">
+                                                                    <span class="shop-product-chip">New in</span>
+                                                                    @if ($product->mainImage)
+                                                                        <img src="{{ $product->mainImage->image_url }}"
+                                                                            alt="{{ $product->name }}">
+                                                                    @else
+                                                                        <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                                            alt="Keycap Artisan Natra">
+                                                                    @endif
+                                                                </div>
+                                                                <div class="shop-product-body text-center">
                                                                     <span
-                                                                        class="card-title">{{ $product->category['name'] }}</span>
-                                                                    <h5 class="card-subtitle ellipsis">{{ $product->name }}
+                                                                        class="shop-product-category">{{ $product->category['name'] }}</span>
+                                                                    <h5 class="shop-product-title">{{ $product->name }}
                                                                     </h5>
-                                                                    <p class="card-text">
+                                                                    <div class="shop-product-price">
                                                                         @if (isset($product->discount_price) && $product->discount_price < $product->price)
                                                                             <span
                                                                                 class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
@@ -333,7 +375,7 @@
                                                                             <span
                                                                                 class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                                                                         @endif
-                                                                    </p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </a>
@@ -356,19 +398,22 @@
                                     @foreach ($products as $product)
                                         <div class="swiper-slide">
                                             <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
-                                                <div class="card"
-                                                    style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                                                    @if ($product->mainImage)
-                                                        <img src="{{ $product->mainImage->image_url }}"
-                                                            class="card-img-top" alt="{{ $product->name }}">
-                                                    @else
-                                                        <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                                            class="card-img-top" alt="Keycap Artisan Natra">
-                                                    @endif
-                                                    <div class="card-body text-center">
-                                                        <span class="card-title">{{ $product->category['name'] }}</span>
-                                                        <h5 class="card-subtitle ellipsis">{{ $product->name }}</h5>
-                                                        <p class="card-text">
+                                                <div class="shop-product-card">
+                                                    <div class="shop-product-media">
+                                                        <span class="shop-product-chip">New in</span>
+                                                        @if ($product->mainImage)
+                                                            <img src="{{ $product->mainImage->image_url }}"
+                                                                alt="{{ $product->name }}">
+                                                        @else
+                                                            <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                                alt="Keycap Artisan Natra">
+                                                        @endif
+                                                    </div>
+                                                    <div class="shop-product-body text-center">
+                                                        <span
+                                                            class="shop-product-category">{{ $product->category['name'] }}</span>
+                                                        <h5 class="shop-product-title">{{ $product->name }}</h5>
+                                                        <div class="shop-product-price">
                                                             @if (isset($product->discount_price) && $product->discount_price < $product->price)
                                                                 <span
                                                                     class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
@@ -378,7 +423,7 @@
                                                                 <span
                                                                     class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                                                             @endif
-                                                        </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </a>
@@ -393,18 +438,21 @@
                             @foreach ($products as $product)
                                 <div class="col-md-3 col-6 mb-3">
                                     <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
-                                        <div class="card" style="border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                                            @if ($product->mainImage)
-                                                <img src="{{ $product->mainImage->image_url }}"
-                                                    class="card-img-top" alt="{{ $product->name }}">
-                                            @else
-                                                <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                                    class="card-img-top" alt="Keycap Artisan Natra">
-                                            @endif
-                                            <div class="card-body text-center">
-                                                <span class="card-title">{{ $product->category['name'] }}</span>
-                                                <h5 class="card-subtitle ellipsis">{{ $product->name }}</h5>
-                                                <p class="card-text">
+                                        <div class="shop-product-card">
+                                            <div class="shop-product-media">
+                                                <span class="shop-product-chip">New in</span>
+                                                @if ($product->mainImage)
+                                                    <img src="{{ $product->mainImage->image_url }}"
+                                                        alt="{{ $product->name }}">
+                                                @else
+                                                    <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                        alt="Keycap Artisan Natra">
+                                                @endif
+                                            </div>
+                                            <div class="shop-product-body text-center">
+                                                <span class="shop-product-category">{{ $product->category['name'] }}</span>
+                                                <h5 class="shop-product-title">{{ $product->name }}</h5>
+                                                <div class="shop-product-price">
                                                     @if (isset($product->discount_price) && $product->discount_price < $product->price)
                                                         <span
                                                             class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
@@ -414,7 +462,7 @@
                                                         <span
                                                             class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                                                     @endif
-                                                </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </a>
@@ -472,19 +520,22 @@
                                                 <div class="col-md-3 col-6 mb-3">
                                                     <a href="/chi-tiet/{{ $product->slug }}"
                                                         class="text-decoration-none text-dark">
-                                                        <div class="card">
-                                                            @if ($product->mainImage)
-                                                                <img src="{{ $product->mainImage->image_url }}"
-                                                                    class="card-img-top" alt="{{ $product->name }}">
-                                                            @else
-                                                                <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                                                    class="card-img-top" alt="Keycap Artisan Natra">
-                                                            @endif
-                                                            <div class="card-body text-center">
-                                                                <span class="card-title">{{ $category->name }}</span>
-                                                                <h5 class="card-subtitle ellipsis">{{ $product->name }}
+                                                        <div class="shop-product-card">
+                                                            <div class="shop-product-media">
+                                                                <span class="shop-product-chip">New in</span>
+                                                                @if ($product->mainImage)
+                                                                    <img src="{{ $product->mainImage->image_url }}"
+                                                                        alt="{{ $product->name }}">
+                                                                @else
+                                                                    <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                                        alt="Keycap Artisan Natra">
+                                                                @endif
+                                                            </div>
+                                                            <div class="shop-product-body text-center">
+                                                                <span class="shop-product-category">{{ $category->name }}</span>
+                                                                <h5 class="shop-product-title">{{ $product->name }}
                                                                 </h5>
-                                                                <p class="card-text">
+                                                                <div class="shop-product-price">
                                                                     @if (isset($product->discount_price) && $product->discount_price < $product->price)
                                                                         <span
                                                                             class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
@@ -494,7 +545,7 @@
                                                                         <span
                                                                             class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                                                                     @endif
-                                                                </p>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </a>
@@ -517,18 +568,21 @@
                                 @foreach ($category->products as $product)
                                     <div class="swiper-slide">
                                         <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
-                                            <div class="card">
-                                                @if ($product->mainImage)
-                                                    <img src="{{ $product->mainImage->image_url }}"
-                                                        class="card-img-top" alt="{{ $product->name }}">
-                                                @else
-                                                    <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                                        class="card-img-top" alt="Keycap Artisan Natra">
-                                                @endif
-                                                <div class="card-body text-center">
-                                                    <span class="card-title">{{ $category->name }}</span>
-                                                    <h5 class="card-subtitle ellipsis">{{ $product->name }}</h5>
-                                                    <p class="card-text">
+                                            <div class="shop-product-card">
+                                                <div class="shop-product-media">
+                                                    <span class="shop-product-chip">New in</span>
+                                                    @if ($product->mainImage)
+                                                        <img src="{{ $product->mainImage->image_url }}"
+                                                            alt="{{ $product->name }}">
+                                                    @else
+                                                        <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                            alt="Keycap Artisan Natra">
+                                                    @endif
+                                                </div>
+                                                <div class="shop-product-body text-center">
+                                                    <span class="shop-product-category">{{ $category->name }}</span>
+                                                    <h5 class="shop-product-title">{{ $product->name }}</h5>
+                                                    <div class="shop-product-price">
                                                         @if (isset($product->discount_price) && $product->discount_price < $product->price)
                                                             <span
                                                                 class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
@@ -538,7 +592,7 @@
                                                             <span
                                                                 class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                                                         @endif
-                                                    </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </a>
@@ -553,18 +607,21 @@
                         @foreach ($category->products as $product)
                             <div class="col-md-3 col-6 mb-3">
                                 <a href="/chi-tiet/{{ $product->slug }}" class="text-decoration-none text-dark">
-                                    <div class="card">
-                                        @if ($product->mainImage)
-                                            <img src="{{ $product->mainImage->image_url }}"
-                                                class="card-img-top" alt="{{ $product->name }}">
-                                        @else
-                                            <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                                                class="card-img-top" alt="Keycap Artisan Natra">
-                                        @endif
-                                        <div class="card-body text-center">
-                                            <span class="card-title">{{ $category->name }}</span>
-                                            <h5 class="card-subtitle ellipsis">{{ $product->name }}</h5>
-                                            <p class="card-text">
+                                    <div class="shop-product-card">
+                                        <div class="shop-product-media">
+                                            <span class="shop-product-chip">New in</span>
+                                            @if ($product->mainImage)
+                                                <img src="{{ $product->mainImage->image_url }}"
+                                                    alt="{{ $product->name }}">
+                                            @else
+                                                <img src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                                                    alt="Keycap Artisan Natra">
+                                            @endif
+                                        </div>
+                                        <div class="shop-product-body text-center">
+                                            <span class="shop-product-category">{{ $category->name }}</span>
+                                            <h5 class="shop-product-title">{{ $product->name }}</h5>
+                                            <div class="shop-product-price">
                                                 @if (isset($product->discount_price) && $product->discount_price < $product->price)
                                                     <span
                                                         class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
@@ -574,7 +631,7 @@
                                                     <span
                                                         class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                                                 @endif
-                                            </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </a>

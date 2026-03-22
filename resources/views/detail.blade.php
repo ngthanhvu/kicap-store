@@ -2,36 +2,120 @@
 
 @section('content')
     <style>
+        .product-detail-page {
+            padding-top: 10px;
+        }
+
+        .detail-breadcrumb {
+            margin-bottom: 18px;
+        }
+
+        .detail-breadcrumb .breadcrumb {
+            margin-bottom: 0;
+            padding: 12px 16px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 999px;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
+        }
+
+        .detail-shell {
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 28px;
+            box-shadow: 0 24px 55px rgba(15, 23, 42, 0.08);
+            padding: 26px;
+        }
+
+        .gallery-panel {
+            position: sticky;
+            top: 100px;
+        }
+
+        .main-image-frame {
+            position: relative;
+            overflow: hidden;
+            border-radius: 26px;
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.86), transparent 32%),
+                linear-gradient(180deg, #eef2f7 0%, #e5ebf3 100%);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            cursor: zoom-in;
+        }
+
         .product-image {
             width: 100%;
-            border-radius: 5px;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
+            border-radius: 0;
+        }
+
+        .thumb-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(56px, 72px));
+            gap: 10px;
+            margin-top: 16px;
         }
 
         .thumbnail {
-            width: 60px;
-            height: 60px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
-            border-radius: 5px;
+            border-radius: 18px;
             cursor: pointer;
             border: 2px solid transparent;
+            background: #fff;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .thumbnail:hover,
         .thumbnail.active {
-            border-color: black;
+            border-color: #111827;
+            transform: translateY(-2px);
+            box-shadow: 0 16px 30px rgba(15, 23, 42, 0.14);
         }
 
-        .color-option {
-            width: 40px;
-            height: 40px;
-            display: inline-block;
-            border-radius: 5px;
-            cursor: pointer;
-            border: 2px solid transparent;
+        .detail-info {
+            padding-left: 12px;
         }
 
-        .color-option.active {
-            border: 2px solid black;
+        .product-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .detail-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #f8fafc;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .detail-title {
+            font-size: clamp(2rem, 3vw, 2.75rem);
+            line-height: 1.05;
+            font-weight: 900;
+            color: #0f172a;
+            margin-bottom: 14px;
+        }
+
+        .price-box {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
         }
 
         .star-rating .fa-star {
@@ -63,16 +147,157 @@
         }
 
         .original-price {
-            font-size: 24px;
-            color: #999;
+            font-size: 1.1rem;
+            color: #94a3b8;
             text-decoration: line-through;
-            margin-right: 8px;
+            margin-right: 4px;
         }
 
         .discount-price {
-            font-size: 26px;
-            color: #e74c3c;
-            font-weight: bold;
+            font-size: clamp(1.8rem, 3vw, 2.35rem);
+            color: #ea580c;
+            font-weight: 900;
+        }
+
+        .stock-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .stock-pill.in-stock {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid rgba(16, 185, 129, 0.16);
+        }
+
+        .stock-pill.out-stock {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.16);
+        }
+
+        .variant-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .variant-btn {
+            min-width: 120px;
+            padding: 10px 14px;
+            border-radius: 14px !important;
+            font-weight: 700;
+        }
+
+        .quantity-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 18px;
+            border-radius: 20px;
+            background: #f8fafc;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            margin-bottom: 18px;
+        }
+
+        .quantity-box .input-group {
+            width: 140px !important;
+        }
+
+        .quantity-box .btn,
+        .quantity-box .form-control {
+            min-height: 44px;
+            border-radius: 14px !important;
+        }
+
+        .detail-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .primary-buy-btn {
+            flex: 1 1 280px;
+            min-height: 54px;
+            border-radius: 18px;
+            background: #111827;
+            border: 0;
+            color: #fff;
+            font-weight: 800;
+            box-shadow: 0 18px 35px rgba(15, 23, 42, 0.18);
+        }
+
+        .primary-buy-btn:hover,
+        .primary-buy-btn:focus {
+            background: #000;
+            color: #fff;
+        }
+
+        .favorite-btn {
+            min-height: 54px;
+            border-radius: 18px;
+            padding: 0 18px;
+            font-weight: 800;
+        }
+
+        .detail-panel {
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 24px;
+            padding: 22px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+        }
+
+        .detail-section-title {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #0f172a;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .detail-section-title::after {
+            content: "";
+            display: block;
+            width: 64px;
+            height: 3px;
+            margin-top: 10px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #111827 0%, #ea580c 100%);
+        }
+
+        .rating-filter-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .rating-filter-wrap .btn {
+            border-radius: 999px;
+            font-weight: 700;
+            padding: 10px 14px;
+        }
+
+        .review-form-card,
+        .ratings-list .rating-item {
+            border-radius: 22px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
+        }
+
+        .review-form-card {
+            padding: 20px;
+            background: #fff;
         }
 
         .original-price-related {
@@ -89,29 +314,54 @@
         }
 
         .card-product {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            transition: transform 0.2s;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 22px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
         }
 
         .card-product:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            transform: translateY(-5px);
+            box-shadow: 0 22px 42px rgba(15, 23, 42, 0.14);
+            transform: translateY(-6px);
+        }
+
+        .card-product img {
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+
+        .card-product .card-body {
+            padding: 16px;
         }
 
         @media (max-width: 768px) {
+            .detail-shell {
+                padding: 16px;
+                border-radius: 22px;
+            }
+
+            .gallery-panel {
+                position: static;
+                margin-bottom: 18px;
+            }
+
+            .detail-info {
+                padding-left: 0;
+            }
+
+            .thumb-strip {
+                grid-template-columns: repeat(auto-fit, minmax(48px, 60px));
+                gap: 8px;
+            }
+
             .thumbnail {
-                width: 45px;
-                height: 45px;
+                border-radius: 14px;
             }
 
             .variant-btn {
                 width: 100% !important;
                 margin-bottom: 0.5rem;
-            }
-
-            .btn.w-50 {
-                width: 100% !important;
             }
 
             .like-btn {
@@ -125,12 +375,75 @@
                 flex: 0 0 50%;
                 max-width: 50%;
             }
+
+            .quantity-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .quantity-box .input-group {
+                width: 100% !important;
+            }
+
+            .detail-actions {
+                flex-direction: column;
+            }
+
+            .primary-buy-btn,
+            .favorite-btn {
+                width: 100%;
+            }
+        }
+
+        .image-lightbox {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(8px);
+            z-index: 1080;
+        }
+
+        .image-lightbox.show {
+            display: flex;
+        }
+
+        .image-lightbox-dialog {
+            position: relative;
+            max-width: min(92vw, 1100px);
+            max-height: 90vh;
+        }
+
+        .image-lightbox-img {
+            display: block;
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 24px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+            background: #fff;
+        }
+
+        .image-lightbox-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.78);
+            color: #fff;
+            font-size: 1.5rem;
+            line-height: 1;
         }
     </style>
 
-    <div class="container">
+    <div class="container product-detail-page">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
+            <ol class="breadcrumb detail-breadcrumb">
                 <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Trang chủ</a></li>
                 <li class="breadcrumb-item"><a href="#" class="text-decoration-none">{{ $product->category->name }}</a>
                 </li>
@@ -140,45 +453,53 @@
     </div>
 
     <div class="container mb-5">
+        <div class="detail-shell">
         <div class="row">
             <div class="col-md-6">
-                @if ($product->mainImage)
-                    <img id="mainImage" src="{{ $product->mainImage->image_url }}"
-                        class="product-image img-fluid" alt="{{ $product->name }}">
-                @else
-                    <img id="mainImage"
-                        src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
-                        class="product-image img-fluid" alt="Không có ảnh">
+                <div class="gallery-panel">
+                <div class="main-image-frame" id="mainImageFrame">
+                    @if ($product->mainImage)
+                        <img id="mainImage" src="{{ $product->mainImage->image_url }}"
+                            class="product-image img-fluid" alt="{{ $product->name }}">
+                    @else
+                        <img id="mainImage"
+                            src="https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg"
+                            class="product-image img-fluid" alt="Không có ảnh">
                 @endif
-                <div class="mt-3 d-flex">
+                </div>
+                <div class="thumb-strip">
                     @forelse ($product->images as $image)
                         <img src="{{ $image->image_url }}"
-                            class="thumbnail mx-1 {{ $image->is_main ? 'active' : '' }}" onclick="changeImage(this)"
+                            class="thumbnail {{ $image->is_main ? 'active' : '' }}" onclick="changeImage(this)"
                             alt="{{ $product->name }}">
                     @empty
                         <p>Không có ảnh phụ nào.</p>
                     @endforelse
                 </div>
+                </div>
             </div>
 
-            <div class="col-md-6">
-                <h2>{{ $product->name }}</h2>
-                <p class="text-muted">Danh mục: {{ $product->category->name }}</p>
-                <h3 class="text-danger" id="productPrice">
+            <div class="col-md-6 detail-info">
+                <div class="product-meta-row">
+                    <span class="detail-pill"><i class="bi bi-grid"></i> {{ $product->category->name }}</span>
+                    <span class="detail-pill"><i class="bi bi-box-seam"></i> {{ $product->variants->count() ?: 1 }} phiên bản</span>
+                </div>
+                <h2 class="detail-title">{{ $product->name }}</h2>
+                <div class="price-box" id="productPrice">
                     @if (isset($product->discount_price) && $product->discount_price < $product->price)
                         <span class="original-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                         <span class="discount-price">{{ number_format($product->discount_price, 0, ',', '.') }}₫</span>
                     @else
                         <span class="discount-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                     @endif
-                </h3>
-                <p><strong>Tình trạng:</strong>
-                    <span id="stockStatus" class="{{ $product->quantity > 0 ? 'text-success' : 'text-danger' }}">
-                        {{ $product->quantity > 0 ? 'Còn hàng' : 'Hết hàng' }}
-                    </span>
-                </p>
+                </div>
+                <div id="stockStatus" class="stock-pill {{ $product->quantity > 0 ? 'in-stock' : 'out-stock' }}">
+                    <i class="bi {{ $product->quantity > 0 ? 'bi-check-circle-fill' : 'bi-x-circle-fill' }}"></i>
+                    {{ $product->quantity > 0 ? 'Còn hàng' : 'Hết hàng' }}
+                </div>
 
-                <p><strong>Phiên bản:</strong></p>
+                <div class="mb-2 fw-bold text-uppercase small text-muted">Phiên bản</div>
+                <div class="variant-wrap">
                 @forelse ($product->variants as $variant)
                     <button class="btn btn-outline-dark btn-sm variant-btn" data-variant-id="{{ $variant->id }}"
                         data-price="{{ $variant->varriant_price }}" data-quantity="{{ $variant->varriant_quantity }}"
@@ -188,13 +509,19 @@
                 @empty
                     <p>Không có phiên bản nào.</p>
                 @endforelse
+                </div>
 
-                <p class="mt-3"><strong>Số lượng:</strong> <span id="stockQuantity">{{ $product->quantity }}</span></p>
-                <div class="input-group" style="width: 120px;">
-                    <button class="btn btn-outline-dark" onclick="changeQuantity(-1)">-</button>
-                    <input type="text" class="form-control text-center" id="quantity" value="1"
-                        oninput="updateQuantity()">
-                    <button class="btn btn-outline-dark" onclick="changeQuantity(1)">+</button>
+                <div class="quantity-box">
+                    <div>
+                        <div class="fw-bold mb-1">Số lượng khả dụng</div>
+                        <div class="text-muted">Hiện còn <strong id="stockQuantity">{{ $product->quantity }}</strong> sản phẩm</div>
+                    </div>
+                    <div class="input-group">
+                        <button class="btn btn-outline-dark border me-2" onclick="changeQuantity(-1)">-</button>
+                        <input type="text" class="form-control text-center me-2" id="quantity" value="1"
+                            oninput="updateQuantity()">
+                        <button class="btn btn-outline-dark border" onclick="changeQuantity(1)">+</button>
+                    </div>
                 </div>
 
                 <form id="addToCartForm" action="{{ route('carts.store') }}" method="POST">
@@ -208,28 +535,28 @@
                         value="{{ $product->discount_price && $product->discount_price < $product->price ? $product->discount_price : $product->price }}">
                     <input type="hidden" name="variant_id" id="variantIdInput" value="">
 
+                    <div class="detail-actions">
                     @if ($product->quantity > 0)
-                        <button type="submit" class="btn btn-dark w-50 mt-3"><i class="fa-solid fa-cart-shopping"></i> THÊM
+                        <button type="submit" class="btn primary-buy-btn"><i class="fa-solid fa-cart-shopping"></i> THÊM
                             VÀO GIỎ HÀNG</button>
                     @else
-                        <button type="button" class="btn btn-dark w-50 mt-3" disabled><i
+                        <button type="button" class="btn primary-buy-btn" disabled><i
                                 class="fa-solid fa-cart-shopping"></i> HẾT HÀNG</button>
                     @endif
 
                     <button type="button" id="toggleFavorite" data-product-id="{{ $product->id }}"
                         data-favorite-id="{{ $favoriteId ?? '' }}"
-                        class="btn {{ isset($favoriteId) ? 'btn-danger' : 'btn-outline-danger' }} mt-3">
+                        class="btn favorite-btn {{ isset($favoriteId) ? 'btn-danger' : 'btn-outline-danger' }}">
                         <i class="fa-solid fa-heart"></i>
                         <span class="favorite-text">{{ isset($favoriteId) ? 'Bỏ yêu thích' : 'Yêu thích' }}</span>
                     </button>
-
-
+                    </div>
                 </form>
             </div>
         </div>
 
-        <div class="mt-5" style="border-top: 1px solid #ccc; padding-top: 20px;">
-            <h4>MÔ TẢ</h4>
+        <div class="mt-5 detail-panel">
+            <h4 class="detail-section-title">Mô tả</h4>
             @if ($product->description == null)
                 <p>Không có mô tả nào.</p>
             @else
@@ -238,9 +565,9 @@
         </div>
 
         <!-- Phần đánh giá sản phẩm -->
-        <div class="mt-5" style="border-top: 1px solid #ccc; padding-top: 20px;">
-            <h4>ĐÁNH GIÁ SẢN PHẨM</h4>
-            <div class="mb-3" id="rating-filters">
+        <div class="mt-5 detail-panel">
+            <h4 class="detail-section-title">Đánh giá sản phẩm</h4>
+            <div class="rating-filter-wrap" id="rating-filters">
                 <button class="btn btn-outline-danger me-2 active" data-star="all">Tất Cả
                     ({{ $ratings->count() }})</button>
                 @for ($i = 5; $i >= 1; $i--)
@@ -254,7 +581,7 @@
                 <!-- Cột bên trái: Form đánh giá -->
                 <div class="col-md-4">
                     @auth
-                        <form action="{{ route('ratings.store', $product->id) }}" method="POST" class="mb-4">
+                        <form action="{{ route('ratings.store', $product->id) }}" method="POST" class="mb-4 review-form-card">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label"><strong>Đánh giá của bạn:</strong></label>
@@ -371,9 +698,7 @@
         </div>
         {{-- Sản phẩm liên quan --}}
         <div class="mt-3">
-            <h4 class="text-start text-uppercase mb-3"><span class="me-2" style="color: #e74c3c;">|</span>Sản phẩm liên
-                quan
-            </h4>
+            <h4 class="detail-section-title">Sản phẩm liên quan</h4>
             <div class="row">
                 @foreach ($related_products as $product)
                     <div class="col-md-3 col-6 mb-3">
@@ -412,6 +737,14 @@
                     </div>
                 @endif
             </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="image-lightbox" id="imageLightbox" aria-hidden="true">
+        <div class="image-lightbox-dialog">
+            <button type="button" class="image-lightbox-close" id="lightboxClose" aria-label="Đóng preview">×</button>
+            <img src="" alt="Preview ảnh sản phẩm" class="image-lightbox-img" id="lightboxImage">
         </div>
     </div>
 

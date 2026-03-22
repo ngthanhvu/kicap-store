@@ -11,7 +11,6 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\RatingController;
-use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\SettingController;
@@ -147,6 +146,3 @@ Route::get('/order/{id}/print-invoice', [OrdersController::class, 'printInvoice'
 // blog
 Route::get('/tin-tuc', [HomeController::class, 'post'])->name('blog.index');
 Route::get('/tin-tuc/{slug}', [PostController::class, 'show'])->name('blog.show');
-//chat bot
-Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
-Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');

@@ -10,7 +10,6 @@
         type="image/x-icon">
     {{-- css  --}}
     <link rel="stylesheet" href="{{ asset('css/public.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/bot.css') }}">
     <!-- boostrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
@@ -59,94 +58,7 @@
         @yield('content')
     </main>
 
-    <div class="chatbot-icon text-white" onclick="toggleChatbot()">
-        <i class="fa-solid fa-robot"></i>
-    </div>
-    <div class="chatbot-container" id="chatbotContainer">
-        <div class="chatbot-header">
-            <h3>Trợ lý Chatbot</h3>
-            <span class="chatbot-close" onclick="toggleChatbot()">×</span>
-        </div>
-        <div class="chat-box" id="chatBox">
-            <div class="message bot-message">Xin chào! Tôi có thể giúp bạn tìm sản phẩm gì hôm nay?</div>
-        </div>
-        <div class="input-group-chatbot">
-            <input type="text" id="messageInput" placeholder="Nhập tin nhắn..." autocomplete="off">
-            <button onclick="sendMessage()">Gửi</button>
-        </div>
-    </div>
-
     @include('includes.footer')
-
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-    <script>
-        function toggleChatbot() {
-            const container = document.getElementById('chatbotContainer');
-            container.classList.toggle('open');
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const chatBox = document.getElementById('chatBox');
-            const message = input.value.trim();
-
-            if (!message) return;
-
-            const userDiv = document.createElement('div');
-            userDiv.className = 'message user-message';
-            userDiv.textContent = message;
-            chatBox.appendChild(userDiv);
-
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message bot-message';
-            typingDiv.textContent = 'Đang nhập...';
-            chatBox.appendChild(typingDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            input.value = '';
-
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                const response = await fetch('{{ route('chatbot.chat') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                    body: JSON.stringify({
-                        message
-                    }),
-                });
-                chatBox.removeChild(typingDiv);
-
-                const data = await response.json();
-
-                const htmlContent = marked.parse(data.message);
-
-                const botDiv = document.createElement('div');
-                botDiv.className = 'message bot-message';
-                botDiv.innerHTML = htmlContent;
-                chatBox.appendChild(botDiv);
-
-                chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (error) {
-                console.error('Lỗi:', error);
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'message bot-message';
-                errorDiv.textContent = 'Xin lỗi, có lỗi xảy ra. Vui lòng thử lại.';
-                chatBox.appendChild(errorDiv);
-                chatBox.removeChild(typingDiv);
-            }
-        }
-
-        document.getElementById('messageInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    </script>
 </body>
 
 </html>

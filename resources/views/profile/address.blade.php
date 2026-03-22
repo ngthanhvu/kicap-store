@@ -71,7 +71,8 @@
         .address-table th,
         .address-table td {
             padding: 10px;
-            text-align: left;
+            text-align: center;
+            vertical-align: middle;
             border-bottom: 1px solid #ddd;
         }
 
@@ -145,19 +146,13 @@
                                         </select>
                                     </div>
                                     <div class="w-50">
-                                        <label for="district">Quận/Huyện</label>
-                                        <select class="form-control form-select" id="district" name="district">
-                                            <option value="">Chọn quận/huyện</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="d-flex">
-                                    <div class="w-50">
                                         <label for="ward">Xã/Phường</label>
                                         <select class="form-control form-select" id="ward" name="ward">
                                             <option value="">Chọn xã/phường</option>
                                         </select>
                                     </div>
+                                </div>
+                                <div class="d-flex">
                                     <div class="w-50">
                                         <label for="street">Số nhà, tên đường</label>
                                         <input type="text" class="form-control" id="street" name="street"
@@ -170,14 +165,13 @@
                             </div>
 
                             <input type="hidden" name="user_id" value="{{ optional(auth()->user())->id }}">
-                            <!-- Không cần full_address nữa vì ta gửi trực tiếp các trường riêng -->
 
                             <button type="submit" class="btn btn-dark">Thêm mới!</button>
                         </form>
 
                         <div class="address-table mt-2">
                             <h5>Danh sách địa chỉ</h5>
-                            <table>
+                            <table class="table table-bordered text-center align-middle">
                                 <thead>
                                     <tr>
                                         <th>STT</th>
@@ -193,8 +187,7 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $address['name'] }}</td>
                                             <td>{{ $address['phone'] }}</td>
-                                            <td>{{ $address['street'] }} - {{ $address['ward'] }} -
-                                                {{ $address['district'] }} - {{ $address['province'] }}</td>
+                                            <td>{{ implode(' - ', array_filter([$address['street'], $address['ward'], $address['district'], $address['province']])) }}</td>
                                             <td>
                                                 <form action="{{ route('address.destroy', $address['id']) }}"
                                                     method="POST" style="display:inline;">
@@ -235,8 +228,9 @@
 
         document.addEventListener("DOMContentLoaded", async function() {
             const provinceSelect = document.getElementById("province");
-            const districtSelect = document.getElementById("district");
             const wardSelect = document.getElementById("ward");
+            const API_BASE = "https://provinces.open-api.vn/api/v2";
+            const provinceDetailCache = new Map();
 
             async function fetchData(url) {
                 try {
@@ -249,74 +243,51 @@
             }
 
             async function loadProvinces() {
-                const data = await fetchData("https://provinces.open-api.vn/api/p/");
+                const data = await fetchData(`${API_BASE}/p/`);
                 if (data) {
                     data.forEach(province => {
                         const option = document.createElement("option");
                         option.value = province.name;
                         option.text = province.name;
+                        option.dataset.code = province.code;
                         provinceSelect.appendChild(option);
                     });
                 }
             }
 
-            async function loadDistricts(provinceName) {
-                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-                wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
-
-                if (!provinceName) return;
-
-                const provinces = await fetchData("https://provinces.open-api.vn/api/p/");
-                const province = provinces?.find(p => p.name === provinceName);
-
-                if (province) {
-                    const data = await fetchData(
-                        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
-                    if (data) {
-                        data.districts.forEach(district => {
-                            const option = document.createElement("option");
-                            option.value = district.name;
-                            option.text = district.name;
-                            districtSelect.appendChild(option);
-                        });
-                    }
+            async function getProvinceDetail(provinceCode) {
+                if (provinceDetailCache.has(provinceCode)) {
+                    return provinceDetailCache.get(provinceCode);
                 }
+
+                const data = await fetchData(`${API_BASE}/p/${provinceCode}?depth=2`);
+
+                if (data) {
+                    provinceDetailCache.set(provinceCode, data);
+                }
+
+                return data;
             }
 
-            async function loadWards(districtName, provinceName) {
+            async function loadWards(provinceCode) {
                 wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
 
-                if (!districtName || !provinceName) return;
+                if (!provinceCode) return;
 
-                const provinces = await fetchData("https://provinces.open-api.vn/api/p/");
-                const province = provinces?.find(p => p.name === provinceName);
+                const data = await getProvinceDetail(provinceCode);
+                const wards = data?.wards ?? [];
 
-                if (province) {
-                    const data = await fetchData(
-                        `https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
-                    const district = data?.districts.find(d => d.name === districtName);
-
-                    if (district) {
-                        const wardData = await fetchData(
-                            `https://provinces.open-api.vn/api/d/${district.code}?depth=2`);
-                        if (wardData) {
-                            wardData.wards.forEach(ward => {
-                                const option = document.createElement("option");
-                                option.value = ward.name;
-                                option.text = ward.name;
-                                wardSelect.appendChild(option);
-                            });
-                        }
-                    }
-                }
+                wards.forEach(ward => {
+                    const option = document.createElement("option");
+                    option.value = ward.name;
+                    option.text = ward.name;
+                    wardSelect.appendChild(option);
+                });
             }
 
             provinceSelect.addEventListener("change", async function() {
-                await loadDistricts(this.value);
-            });
-
-            districtSelect.addEventListener("change", async function() {
-                await loadWards(this.value, provinceSelect.value);
+                const provinceCode = this.options[this.selectedIndex]?.dataset.code;
+                await loadWards(provinceCode);
             });
 
             await loadProvinces();

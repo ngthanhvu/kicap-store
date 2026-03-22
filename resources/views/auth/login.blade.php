@@ -75,16 +75,16 @@
                     <label class="form-check-label" for="rememberMe">Ghi nhớ tôi</label>
                     <a href="/quen-mat-khau" class="float-end text-decoration-none">Quên mật khẩu?</a>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Đăng Nhập</button>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-box-arrow-in-right"></i>    
+                    Đăng Nhập
+                </button>
             </form>
 
             <!-- Đăng nhập bằng mạng xã hội -->
             <div class="text-center mt-3">
                 <p>Hoặc đăng nhập bằng:</p>
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="/login/facebook" class="btn btn-facebook social-btn w-100">
-                        <i class="bi bi-facebook me-2"></i> Facebook
-                    </a>
                     <a href="/login/google" class="btn btn-google social-btn w-100">
                         <i class="bi bi-google me-2"></i> Google
                     </a>

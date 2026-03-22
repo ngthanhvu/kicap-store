@@ -1,12 +1,59 @@
 document.addEventListener('DOMContentLoaded', function () {
     let maxQuantity = window.maxQuantity || 1;
     let selectedPrice = window.selectedPrice || 0;
+    const mainImage = document.getElementById('mainImage');
+    const mainImageFrame = document.getElementById('mainImageFrame');
+    const lightbox = document.getElementById('imageLightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const lightboxClose = document.getElementById('lightboxClose');
 
     window.changeImage = function (img) {
-        document.getElementById('mainImage').src = img.src;
+        if (mainImage) {
+            mainImage.src = img.src;
+        }
         document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
         img.classList.add('active');
     }
+
+    function openLightbox() {
+        if (!mainImage || !lightbox || !lightboxImage) return;
+
+        lightboxImage.src = mainImage.src;
+        lightbox.classList.add('show');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        if (!lightbox || !lightboxImage) return;
+
+        lightbox.classList.remove('show');
+        lightbox.setAttribute('aria-hidden', 'true');
+        lightboxImage.src = '';
+        document.body.style.overflow = '';
+    }
+
+    if (mainImageFrame) {
+        mainImageFrame.addEventListener('click', openLightbox);
+    }
+
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+    }
+
+    if (lightbox) {
+        lightbox.addEventListener('click', function (event) {
+            if (event.target === lightbox) {
+                closeLightbox();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && lightbox?.classList.contains('show')) {
+            closeLightbox();
+        }
+    });
 
     window.selectVariant = function (name, price, quantity, variantId) {
         selectedPrice = price;
