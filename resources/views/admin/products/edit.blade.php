@@ -1,6 +1,22 @@
 @extends('layouts.admin')
 
 @section('content')
+    @php
+        $formatNumberInput = function ($value) {
+            if ($value === null || $value === '') {
+                return '';
+            }
+
+            if (!is_numeric($value)) {
+                return $value;
+            }
+
+            return fmod((float) $value, 1.0) === 0.0
+                ? number_format((float) $value, 0, '.', '')
+                : rtrim(rtrim((string) $value, '0'), '.');
+        };
+    @endphp
+
     <div class="tw-mb-5">
         <h3 class="tw-text-3xl tw-font-bold tw-text-center tw-mb-3">Chỉnh sửa sản phẩm: {{ $product->name }}</h3>
     </div>
@@ -23,8 +39,8 @@
 
                     <div class="mb-3">
                         <label for="price" class="form-label">Giá nhập</label>
-                        <input type="number" class="form-control" id="original_price" name="original_price"
-                            value="{{ old('original_price', $product->original_price) ?? 0 }}">
+                        <input type="number" min="0" class="form-control" id="original_price" name="original_price"
+                            value="{{ $formatNumberInput(old('original_price', $product->original_price ?? 0)) }}">
                         @error('original_price')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
@@ -32,8 +48,8 @@
 
                     <div class="mb-3">
                         <label for="price" class="form-label">Giá bán</label>
-                        <input type="number" class="form-control" id="price" name="price"
-                            value="{{ old('price', $product->price) }}">
+                        <input type="number" min="0" class="form-control" id="price" name="price"
+                            value="{{ $formatNumberInput(old('price', $product->price)) }}">
                         @error('price')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
@@ -41,9 +57,9 @@
 
                     <div class="mb-3">
                         <label for="discount_price" class="form-label">Giá giảm</label>
-                        <input type="text" class="form-control" id="discount_price" name="discount_price"
+                        <input type="number" min="0" class="form-control" id="discount_price" name="discount_price"
                             placeholder="Nhập giá giảm (nếu có)"
-                            value="{{ old('discount_price', $product->discount_price) }}">
+                            value="{{ $formatNumberInput(old('discount_price', $product->discount_price)) }}">
                         @if ($product->discount_price)
                             <p class="text-danger">Giá giảm: {{ number_format($product->discount_price, 0, ',', '.') }}₫</p>
                         @endif
@@ -54,8 +70,8 @@
 
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Số lượng</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity"
-                            value="{{ old('quantity', $product->quantity) }}">
+                        <input type="number" min="0" class="form-control" id="quantity" name="quantity"
+                            value="{{ $formatNumberInput(old('quantity', $product->quantity)) }}">
                         @error('quantity')
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
@@ -190,14 +206,14 @@
                                                 value="{{ $variant->varriant_name }}" placeholder="Tên biến thể">
                                         </div>
                                         <div class="col-md-3">
-                                            <input type="number" class="form-control mb-2"
+                                            <input type="number" min="0" class="form-control mb-2"
                                                 name="variants[{{ $index }}][price]"
-                                                value="{{ $variant->varriant_price }}" placeholder="Giá">
+                                                value="{{ $formatNumberInput($variant->varriant_price) }}" placeholder="Giá">
                                         </div>
                                         <div class="col-md-3">
-                                            <input type="number" class="form-control mb-2"
+                                            <input type="number" min="0" class="form-control mb-2"
                                                 name="variants[{{ $index }}][quantity]"
-                                                value="{{ $variant->varriant_quantity }}" placeholder="Số lượng">
+                                                value="{{ $formatNumberInput($variant->varriant_quantity) }}" placeholder="Số lượng">
                                         </div>
                                         <div class="col-md-3">
                                             <input type="text" class="form-control mb-2"
@@ -263,6 +279,18 @@
 
     <!-- JavaScript -->
     <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.target.matches('input[type="number"][min="0"]') && event.key === '-') {
+                event.preventDefault();
+            }
+        });
+
+        document.addEventListener('input', function(event) {
+            if (event.target.matches('input[type="number"][min="0"]') && Number(event.target.value) < 0) {
+                event.target.value = 0;
+            }
+        });
+
         // Khởi tạo Quill Editor với nội dung hiện tại
         var quill = new Quill('#description-editor', {
             theme: 'snow',
@@ -294,10 +322,10 @@
                             <input type="text" class="form-control mb-2" name="variants[${count}][name]" placeholder="Tên biến thể">
                         </div>
                         <div class="col-md-3">
-                            <input type="number" class="form-control mb-2" name="variants[${count}][price]" placeholder="Giá">
+                            <input type="number" min="0" class="form-control mb-2" name="variants[${count}][price]" placeholder="Giá">
                         </div>
                         <div class="col-md-3">
-                            <input type="number" class="form-control mb-2" name="variants[${count}][quantity]" placeholder="Số lượng">
+                            <input type="number" min="0" class="form-control mb-2" name="variants[${count}][quantity]" placeholder="Số lượng">
                         </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control mb-2" name="variants[${count}][sku]" placeholder="SKU">

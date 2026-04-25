@@ -22,7 +22,7 @@
 
                     <div class="mb-3">
                         <label for="price" class="form-label">Giá nhập</label>
-                        <input type="number" class="form-control" id="original_price" name="original_price"
+                        <input type="number" min="0" class="form-control" id="original_price" name="original_price"
                             placeholder="Nhập giá sản phẩm">
                         @error('original_price')
                             <p class="text-danger">{{ $message }}</p>
@@ -31,7 +31,7 @@
 
                     <div class="mb-3">
                         <label for="price" class="form-label">Giá bán</label>
-                        <input type="number" class="form-control" id="price" name="price"
+                        <input type="number" min="0" class="form-control" id="price" name="price"
                             placeholder="Nhập giá sản phẩm">
                         @error('price')
                             <p class="text-danger">{{ $message }}</p>
@@ -40,7 +40,7 @@
 
                     <div class="mb-3">
                         <label for="discount_price" class="form-label">Giá giảm</label>
-                        <input type="text" class="form-control" id="discount_price" name="discount_price"
+                        <input type="number" min="0" class="form-control" id="discount_price" name="discount_price"
                             placeholder="Nhập giá giảm (nếu có)">
                         @error('discount_price')
                             <p class="text-danger">{{ $message }}</p>
@@ -49,7 +49,7 @@
 
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Số lượng</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity"
+                        <input type="number" min="0" class="form-control" id="quantity" name="quantity"
                             placeholder="Nhập số lượng">
                         @error('quantity')
                             <p class="text-danger">{{ $message }}</p>
@@ -162,11 +162,11 @@
                                             placeholder="Tên biến thể">
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="number" class="form-control mb-2" name="variants[0][price]"
+                                        <input type="number" min="0" class="form-control mb-2" name="variants[0][price]"
                                             placeholder="Giá">
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="number" class="form-control mb-2" name="variants[0][quantity]"
+                                        <input type="number" min="0" class="form-control mb-2" name="variants[0][quantity]"
                                             placeholder="Số lượng">
                                     </div>
                                     <div class="col-md-3">
@@ -223,6 +223,18 @@
 
     <!-- JavaScript -->
     <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.target.matches('input[type="number"][min="0"]') && event.key === '-') {
+                event.preventDefault();
+            }
+        });
+
+        document.addEventListener('input', function(event) {
+            if (event.target.matches('input[type="number"][min="0"]') && Number(event.target.value) < 0) {
+                event.target.value = 0;
+            }
+        });
+
         // Thêm biến thể
         document.getElementById('add-variant').addEventListener('click', function() {
             let container = document.getElementById('variant-container');
@@ -234,10 +246,10 @@
                             <input type="text" class="form-control mb-2" name="variants[${count}][name]" placeholder="Tên biến thể">
                         </div>
                         <div class="col-md-3">
-                            <input type="number" class="form-control mb-2" name="variants[${count}][price]" placeholder="Giá">
+                            <input type="number" min="0" class="form-control mb-2" name="variants[${count}][price]" placeholder="Giá">
                         </div>
                         <div class="col-md-3">
-                            <input type="number" class="form-control mb-2" name="variants[${count}][quantity]" placeholder="Số lượng">
+                            <input type="number" min="0" class="form-control mb-2" name="variants[${count}][quantity]" placeholder="Số lượng">
                         </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control mb-2" name="variants[${count}][sku]" placeholder="SKU">

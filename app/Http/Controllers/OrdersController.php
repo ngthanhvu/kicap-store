@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderStatusChanged;
+use Illuminate\Support\Facades\Log;
 
 class OrdersController extends Controller
 {
@@ -59,7 +60,20 @@ class OrdersController extends Controller
         $user = Auth::user();
         $cartItems = Carts::where('user_id', $user->id)->get();
 
+        Log::info('Checkout started', [
+            'user_id' => $user->id,
+            'payment_method' => $request->payment_method,
+            'address_id' => $request->address_id,
+            'shipping_fee' => $request->shipping_fee,
+            'total_amount' => $request->total_amount,
+            'discount' => $request->discount,
+            'cart_count' => $cartItems->count(),
+        ]);
+
         if ($cartItems->isEmpty()) {
+            Log::warning('Checkout stopped because cart is empty', [
+                'user_id' => $user->id,
+            ]);
             return redirect()->back()->with('error', 'Giỏ hàng trống');
         }
 
@@ -77,6 +91,13 @@ class OrdersController extends Controller
                 'shipping_fee' => $shippingFee,
                 'discount' => $request->input('discount', 0),
                 'status' => 'pending',
+            ]);
+
+            Log::info('Order created from checkout', [
+                'order_id' => $order->id,
+                'user_id' => $user->id,
+                'payment_method' => $order->payment_method,
+                'total_price' => $order->total_price,
             ]);
 
             foreach ($cartItems as $item) {
@@ -98,6 +119,14 @@ class OrdersController extends Controller
             return $paymentController->processPayment($order, $request->payment_method, $totalPrice);
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('Checkout failed', [
+                'user_id' => $user->id ?? null,
+                'payment_method' => $request->payment_method,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return redirect()->route('alert.fail')->with('error', 'Có lỗi khi thêm đơn hàng: ' . $e->getMessage());
         }
     }

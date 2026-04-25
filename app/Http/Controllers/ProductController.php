@@ -67,10 +67,12 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'price' => 'required|numeric',
-            'original_price' => 'required|numeric',
-            'discount_price' => 'nullable|numeric',
-            'quantity' => 'required|integer',
+            'price' => 'required|numeric|min:0',
+            'original_price' => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'variants.*.price' => 'nullable|numeric|min:0',
+            'variants.*.quantity' => 'nullable|integer|min:0',
             'category_id' => 'required|exists:categories,id',
             'main_image' => 'required|image',
             'sub_images.*' => 'image',
@@ -183,10 +185,12 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'price' => 'required|numeric',
-            'original_price' => 'required|numeric',
-            'discount_price' => 'nullable|numeric',
-            'quantity' => 'required|integer',
+            'price' => 'required|numeric|min:0',
+            'original_price' => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'variants.*.price' => 'nullable|numeric|min:0',
+            'variants.*.quantity' => 'nullable|integer|min:0',
             'category_id' => 'required|exists:categories,id',
             'main_image' => 'nullable|image',
             'sub_images.*' => 'nullable|image',

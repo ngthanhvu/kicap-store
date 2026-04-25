@@ -12,6 +12,32 @@ use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
+    private function sendPaymentConfirmation($order)
+    {
+        $email = $order->user->email ?? null;
+
+        if (empty($email)) {
+            Log::warning('Payment confirmation email skipped because user email is empty', [
+                'order_id' => $order->id,
+                'user_id' => $order->user_id,
+            ]);
+            return;
+        }
+
+        try {
+            Mail::to($email)->send(new PaymentConfirmation($order));
+        } catch (\Throwable $e) {
+            Log::warning('Payment confirmation email failed', [
+                'order_id' => $order->id,
+                'user_id' => $order->user_id,
+                'email' => $email,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+        }
+    }
+
     // Tạo URL thanh toán VNPay
     private function generateVnpayUrl($order, $amount)
     {
@@ -19,6 +45,16 @@ class PaymentController extends Controller
         $vnp_HashSecret = env('VNPAY_HASH_SECRET');
         $vnp_Url = env('VNPAY_URL');
         $vnp_Returnurl = route('vnpay.callback');
+
+        if (empty($vnp_TmnCode) || empty($vnp_HashSecret) || empty($vnp_Url)) {
+            Log::error('VNPay config is missing', [
+                'order_id' => $order->id,
+                'has_tmn_code' => !empty($vnp_TmnCode),
+                'has_hash_secret' => !empty($vnp_HashSecret),
+                'has_url' => !empty($vnp_Url),
+            ]);
+            abort(500, 'Cau hinh VNPay khong hop le');
+        }
 
         $vnp_TxnRef = $order->id;
         $vnp_OrderInfo = "Thanh toán đơn hàng #$vnp_TxnRef";
@@ -57,8 +93,13 @@ class PaymentController extends Controller
         $endpoint = env('MOMO_URL', 'https://test-payment.momo.vn/v2/gateway/api/create');
         $returnUrl = route('momo.callback');
 
-        if (empty($partnerCode)) {
-            Log::error('MOMO_PARTNER_CODE is not set in .env');
+        if (empty($partnerCode) || empty($accessKey) || empty($secretKey)) {
+            Log::error('MoMo config is missing', [
+                'order_id' => $order->id,
+                'has_partner_code' => !empty($partnerCode),
+                'has_access_key' => !empty($accessKey),
+                'has_secret_key' => !empty($secretKey),
+            ]);
             abort(500, 'Cấu hình MoMo không hợp lệ: partnerCode bị trống');
         }
 
@@ -118,6 +159,15 @@ class PaymentController extends Controller
         $clientSecret = env('PAYPAL_SECRET', 'YourPayPalSecretHere');
         $returnUrl = route('paypal.callback');
         $cancelUrl = route('paypal.cancel');
+
+        if (empty($clientId) || empty($clientSecret) || $clientId === 'YourPayPalClientIDHere' || $clientSecret === 'YourPayPalSecretHere') {
+            Log::error('PayPal config is missing', [
+                'order_id' => $order->id,
+                'has_client_id' => !empty($clientId) && $clientId !== 'YourPayPalClientIDHere',
+                'has_client_secret' => !empty($clientSecret) && $clientSecret !== 'YourPayPalSecretHere',
+            ]);
+            abort(500, 'Cau hinh PayPal khong hop le');
+        }
 
         // Lấy access token
         $ch = curl_init();
@@ -261,7 +311,7 @@ class PaymentController extends Controller
                     $user = $order->user;
                     if ($user && !empty($user->email)) {
                         $order->email = $user->email;
-                        Mail::to($order->email)->send(new PaymentConfirmation($order));
+                        $this->sendPaymentConfirmation($order);
                     }
 
                     return redirect()->route('alert.success');
@@ -356,7 +406,7 @@ class PaymentController extends Controller
                     $user = $order->user;
                     if ($user && !empty($user->email)) {
                         $order->email = $user->email;
-                        Mail::to($order->email)->send(new PaymentConfirmation($order));
+                        $this->sendPaymentConfirmation($order);
                     }
 
                     return redirect()->route('alert.success');
@@ -459,7 +509,7 @@ class PaymentController extends Controller
                 $user = $order->user;
                 if ($user && !empty($user->email)) {
                     $order->email = $user->email;
-                    Mail::to($order->email)->send(new PaymentConfirmation($order));
+                    $this->sendPaymentConfirmation($order);
                 }
 
                 return redirect()->route('alert.success');
@@ -514,6 +564,13 @@ class PaymentController extends Controller
     // Phương thức xử lý thanh toán chung
     public function processPayment($order, $paymentMethod, $totalPrice)
     {
+        Log::info('Payment processing started', [
+            'order_id' => $order->id,
+            'user_id' => $order->user_id,
+            'payment_method' => $paymentMethod,
+            'total_price' => $totalPrice,
+        ]);
+
         switch ($paymentMethod) {
             case 'cod':
                 $orderItems = $order->orderItems;
@@ -536,18 +593,34 @@ class PaymentController extends Controller
                     ]);
                 }
 
-                Mail::to($order->user->email)->send(new PaymentConfirmation($order));
+                $this->sendPaymentConfirmation($order);
+                Log::info('COD payment completed', [
+                    'order_id' => $order->id,
+                    'user_id' => $order->user_id,
+                ]);
                 return redirect()->route('alert.success', $order->id)->with('success', 'Thêm đơn hàng thành công!');
                 break;
             case 'vnpay':
+                Log::info('Generating VNPay payment URL', [
+                    'order_id' => $order->id,
+                    'total_price' => $totalPrice,
+                ]);
                 $vnpayUrl = $this->generateVnpayUrl($order, $totalPrice);
                 return redirect()->away($vnpayUrl);
                 break;
             case 'momo':
+                Log::info('Generating MoMo payment URL', [
+                    'order_id' => $order->id,
+                    'total_price' => $totalPrice,
+                ]);
                 $momoUrl = $this->generateMomoUrl($order, $totalPrice);
                 return redirect()->away($momoUrl);
                 break;
             case 'paypal':
+                Log::info('Generating PayPal payment URL', [
+                    'order_id' => $order->id,
+                    'total_price' => $totalPrice,
+                ]);
                 $paypalUrl = $this->generatePaypalUrl($order, $totalPrice);
                 return redirect()->away($paypalUrl);
                 break;
